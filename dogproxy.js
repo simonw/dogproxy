@@ -1,5 +1,6 @@
 var port = 8009;
 
+// Requries http://github.com/danwrong/restler
 var sys = require('sys'), 
     http = require('http'),
     url_mod = require('url'),
@@ -9,10 +10,17 @@ var sys = require('sys'),
 var in_flight = {};
 
 http.createServer(function (req, res) {
-    var url = url_mod.parse(req.url, true).query.url;
+    var bits = url_mod.parse(req.url, true);
+    if (!bits.query || !bits.query.url) {
+        res.sendHeader(500, {'Content-Type': 'text/plain'});
+        res.sendBody('Error - no URL specified');
+        res.finish();
+        return;
+    }
+    var url = bits.query.url;
     sys.puts('Request for ' + url);
     function complete(status, content_type, body) {
-        res.sendHeader(status, {'Content-Type': content_type});
+        res.sendHeader(status, {'Content-Type': content_type||'text/plain'});
         res.sendBody(body);
         res.finish();
     }
@@ -25,6 +33,9 @@ http.createServer(function (req, res) {
         function done(body, response) {
             var status = response.statusCode;
             var content_type = response['content-type'];
+            if (!in_flight[url]) {
+                return;
+            }
             sys.puts(
                 'Fetched ' + url + ', alerting ' + in_flight[url].length + 
                 ' waiting clients'
