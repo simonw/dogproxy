@@ -14,16 +14,16 @@ http.createServer(function (req, res) {
     var bits = url_mod.parse(req.url, true);
     if (!bits.query || !bits.query.url) {
         res.sendHeader(500, {'Content-Type': 'text/plain'});
-        res.sendBody('Error - no URL specified');
-        res.finish();
+        res.write('Error - no URL specified');
+        res.close();
         return;
     }
     var url = bits.query.url;
     sys.puts('Request for ' + url);
     function complete(status, content_type, body) {
         res.sendHeader(status, {'Content-Type': content_type||'text/plain'});
-        res.sendBody(body);
-        res.finish();
+        res.write(body);
+        res.close();
     }
     if (in_flight.listeners(url).length > 0) {
         in_flight.addListener(url, complete);
