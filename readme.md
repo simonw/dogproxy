@@ -1,5 +1,4 @@
-dogproxy
-========
+# dogproxy
 
 A very simple dog pile preventing proxy.
 
@@ -16,13 +15,16 @@ through, for example). Expect to modify this code further before use.
 
 Usage:
 
-$ node dogproxy.js 
-Server running at http://127.0.0.1:8009/
+    $ node dogproxy.js 
+    Server running at http://127.0.0.1:8009/
 
-$ ab -n 10 -c 5 'http://127.0.0.1:8009/?url=http://example.com/'
+Testing using ab:
+
+    $ ab -n 10 -c 5 'http://127.0.0.1:8009/?url=http://example.com/'
 
 dogproxy.js says:
 
+```
 Request for http://example.com/
 ... kicking off backend HTTP fetch
 Request for http://example.com/
@@ -45,3 +47,4 @@ Request for http://example.com/
 Request for http://example.com/
 ... already in flight, adding to queue
 Fetched http://example.com/, alerting 5 waiting clients
+```
